@@ -1,12 +1,16 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { useSelector } from 'react-redux'
 import { motion } from 'motion/react'
 import { BsRobot ,BsCoin } from 'react-icons/bs'
 import {HiOutlineLogout } from 'react-icons/hi'
 import { FaUserAstronaut } from 'react-icons/fa'
+import { useNavigate } from 'react-router-dom'
 
 function NavBar() {
     const {userData } = useSelector( (state)=>state.user );
+    const [showcredit , setshowcredit ] = useState(false);
+    const [showprofile , setshowprofile ] = useState(false);
+    const navigate = useNavigate();
   return (
 
     <div className="bg-[#f3f3f3] flex justify-center px-4 pt-6">
@@ -21,6 +25,31 @@ function NavBar() {
                 <BsRobot size={18} />
             </div>
             <h1 className='font-semibold hidden md:block text-lg' >InterviewIQ.AI</h1>
+        </div>
+
+        <div className='flex items-center gap-6 relative'>
+
+            <div className='relative'>
+                <button onClick={()=>setshowcredit(!showcredit)} className='flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
+                    <BsCoin size={18} />
+                    {userData?.credites || 0}
+                </button>
+                {
+                    showcredit &&    (
+                        <div className='absolute  right-[-50px] mt-3 w-64 bg-white shadow-xl border border-gray-200 rounded-xl p-5 z-50 '>
+                                <p className='text-sm text-gray-600 mb-4'> Need more credits to continue?</p>
+                                <button onClick={()=>navigate('/pricing')} className='w-full bg-black text-white py-2 rounded-lg text-sm'>Buy more credits </button>
+                        </div>
+                    )
+                }
+            </div>
+
+             <div className='relative'>
+                <button className='w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
+                   {userData ? userData?.name.slice(0,1).toUpperCase(): <FaUserAstronaut size={18} />}
+                </button>
+            </div>
+
         </div>
     
   </motion.div>
