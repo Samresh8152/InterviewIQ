@@ -8,11 +8,13 @@ import { useNavigate } from 'react-router-dom'
 import { ServerUrl } from '../App'
 import axios from 'axios'
 import { setUserData } from '../redux/userSlice'
+import AuthModel from './AuthModel'
 
 function NavBar() {
     const {userData } = useSelector( (state)=>state.user );
     const [showcredit , setshowcredit ] = useState(false);
     const [showprofile , setshowprofile ] = useState(false);
+    const [showAuth,setShowAuth] = useState(false);
     const navigate = useNavigate();
     const dispatch = useDispatch();
 
@@ -47,7 +49,8 @@ function NavBar() {
         <div className='flex items-center gap-6 relative'>
 
             <div className='relative'>
-                <button onClick={()=>{setshowcredit(!showcredit); setshowprofile(false); }} className='flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
+                <button onClick={()=>{ if(!userData){setShowAuth(true) 
+                    return;} setshowcredit(!showcredit); setshowprofile(false); }} className='flex items-center gap-2 bg-gray-100 text-gray-700 px-4 py-2 rounded-full text-md hover:bg-gray-200 transition'>
                     <BsCoin size={18} />
                     {userData?.credites || 0}
                 </button>
@@ -62,13 +65,14 @@ function NavBar() {
             </div>
 
              <div className='relative'>
-                <button onClick={()=>{setshowprofile(!showprofile);setshowcredit(false)}}  className='w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
+                <button onClick={()=>{ if(!userData){setShowAuth(true) 
+                    return;} setshowprofile(!showprofile);setshowcredit(false)}}  className='w-9 h-9 bg-black text-white rounded-full flex items-center justify-center font-semibold'>
                    {userData ? userData?.name.slice(0,1).toUpperCase(): <FaUserAstronaut size={18} />}
                 </button>
                 {showprofile && (
                     <div className=' absolute right-0 mt-3 w-48 shadow-xl border py-2 px-2 rounded-xl bg-white border-gray-200'>
                          <p className='text-md text-blue-500 font-medium mb-1' >{userData?.name}</p> 
-                         <button onClick={()=>navigate('/history')} className='w-full text-left text-sm py-2 hover:text-black text-gray-600'>Interview History </button>
+                         <button onClick={()=> navigate('/history')} className='w-full text-left text-sm py-2 hover:text-black text-gray-600'>Interview History </button>
                          <button onClick={handleLogout} className='w-full text-left text-sm py-2 flex items-center gap-2 text-red-500 ' >
                             <HiOutlineLogout size={16} />
                             Logout</button>
@@ -79,6 +83,9 @@ function NavBar() {
         </div>
     
   </motion.div>
+
+            {showAuth && <AuthModel onClose={()=> setShowAuth(false) }/>}
+
 </div>
 
   )
