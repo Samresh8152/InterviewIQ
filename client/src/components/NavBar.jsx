@@ -1,18 +1,32 @@
 import React, { useState } from 'react'
-import { useSelector } from 'react-redux'
+import { useDispatch, useSelector } from 'react-redux'
 import { motion } from 'motion/react'
 import { BsRobot ,BsCoin } from 'react-icons/bs'
 import {HiOutlineLogout } from 'react-icons/hi'
 import { FaUserAstronaut } from 'react-icons/fa'
 import { useNavigate } from 'react-router-dom'
+import { ServerUrl } from '../App'
+import axios from 'axios'
+import { setUserData } from '../redux/userSlice'
 
 function NavBar() {
     const {userData } = useSelector( (state)=>state.user );
     const [showcredit , setshowcredit ] = useState(false);
     const [showprofile , setshowprofile ] = useState(false);
     const navigate = useNavigate();
+    const dispatch = useDispatch();
 
-    
+    const handleLogout = async() =>{
+        try {
+            await axios.post(ServerUrl+'/api/auth/logout',{},{withCredentials:true} );
+            dispatch(setUserData(null));
+            setshowprofile(false);
+            setshowcredit(false);
+            navigate('/');
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
   return (
 
@@ -55,7 +69,7 @@ function NavBar() {
                     <div className=' absolute right-0 mt-3 w-48 shadow-xl border py-2 px-2 rounded-xl bg-white border-gray-200'>
                          <p className='text-md text-blue-500 font-medium mb-1' >{userData?.name}</p> 
                          <button onClick={()=>navigate('/history')} className='w-full text-left text-sm py-2 hover:text-black text-gray-600'>Interview History </button>
-                         <button className='w-full text-left text-sm py-2 flex items-center gap-2 text-red-500 ' >
+                         <button onClick={handleLogout} className='w-full text-left text-sm py-2 flex items-center gap-2 text-red-500 ' >
                             <HiOutlineLogout size={16} />
                             Logout</button>
                          </div>
